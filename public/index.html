@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaskFlow — Manage Your Work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Unbounded:wght@300;400;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- AUTH SCREEN -->
+  <div class="auth-screen" id="auth-screen">
+    <div class="auth-bg">
+      <div class="auth-grid"></div>
+    </div>
+    <div class="auth-container">
+      <div class="auth-brand">
+        <span class="brand-icon">◈</span>
+        <h1>TaskFlow</h1>
+        <p>Manage. Track. Deliver.</p>
+      </div>
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Login</button>
+          <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div class="auth-form" id="login-form">
+          <div class="input-group">
+            <label>EMAIL</label>
+            <input type="email" id="login-email" placeholder="you@example.com" class="input"/>
+          </div>
+          <div class="input-group">
+            <label>PASSWORD</label>
+            <input type="password" id="login-password" placeholder="••••••••" class="input"/>
+          </div>
+          <button class="btn-primary full" onclick="login()">Login →</button>
+          <div id="login-error" class="auth-error"></div>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="auth-form hidden" id="register-form">
+          <div class="input-group">
+            <label>NAME</label>
+            <input type="text" id="reg-name" placeholder="Your Name" class="input"/>
+          </div>
+          <div class="input-group">
+            <label>EMAIL</label>
+            <input type="email" id="reg-email" placeholder="you@example.com" class="input"/>
+          </div>
+          <div class="input-group">
+            <label>PASSWORD</label>
+            <input type="password" id="reg-password" placeholder="Min 6 characters" class="input"/>
+          </div>
+          <button class="btn-primary full" onclick="register()">Create Account →</button>
+          <div id="reg-error" class="auth-error"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="app hidden" id="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">◈</span>
+        <span>TaskFlow</span>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar">P</div>
+        <div class="user-info">
+          <span class="user-name" id="user-name">Priyanshi</span>
+          <span class="user-role">Member</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" onclick="filterTasks('all')" id="nav-all">
+          <span class="nav-icon">▣</span> All Tasks
+          <span class="nav-count" id="count-all">0</span>
+        </a>
+        <a class="nav-item" onclick="filterTasks('todo')" id="nav-todo">
+          <span class="nav-icon">○</span> To Do
+          <span class="nav-count" id="count-todo">0</span>
+        </a>
+        <a class="nav-item" onclick="filterTasks('inprogress')" id="nav-inprogress">
+          <span class="nav-icon">◑</span> In Progress
+          <span class="nav-count" id="count-inprogress">0</span>
+        </a>
+        <a class="nav-item" onclick="filterTasks('done')" id="nav-done">
+          <span class="nav-icon">●</span> Done
+          <span class="nav-count" id="count-done">0</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-logout" onclick="logout()">↩ Logout</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+      <!-- HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="menu-btn" onclick="toggleSidebar()">☰</button>
+          <div>
+            <h2 id="page-title">All Tasks</h2>
+            <p class="header-sub" id="page-sub">Manage your work</p>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="openModal()">+ New Task</button>
+      </header>
+
+      <!-- STATS BAR -->
+      <div class="stats-bar">
+        <div class="stat-pill">
+          <span class="stat-val" id="stat-total">0</span>
+          <span class="stat-lbl">Total</span>
+        </div>
+        <div class="stat-pill accent">
+          <span class="stat-val" id="stat-inprogress">0</span>
+          <span class="stat-lbl">Active</span>
+        </div>
+        <div class="stat-pill success">
+          <span class="stat-val" id="stat-done">0</span>
+          <span class="stat-lbl">Done</span>
+        </div>
+        <div class="stat-pill danger">
+          <span class="stat-val" id="stat-overdue">0</span>
+          <span class="stat-lbl">Overdue</span>
+        </div>
+      </div>
+
+      <!-- SEARCH & FILTER -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input type="text" id="search-input" placeholder="Search tasks..." oninput="searchTasks()" class="search-input"/>
+        </div>
+        <div class="priority-filters">
+          <button class="filter-btn active" onclick="filterPriority('all', this)">All</button>
+          <button class="filter-btn high" onclick="filterPriority('high', this)">High</button>
+          <button class="filter-btn medium" onclick="filterPriority('medium', this)">Med</button>
+          <button class="filter-btn low" onclick="filterPriority('low', this)">Low</button>
+        </div>
+      </div>
+
+      <!-- TASKS BOARD -->
+      <div class="tasks-container" id="tasks-container">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">◈</div>
+          <p>No tasks yet. Create your first task!</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- TASK MODAL -->
+  <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal(event)">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">New Task</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group">
+          <label>TASK TITLE *</label>
+          <input type="text" id="task-title" placeholder="What needs to be done?" class="input"/>
+        </div>
+        <div class="input-group">
+          <label>DESCRIPTION</label>
+          <textarea id="task-desc" placeholder="Add details..." rows="3" class="input"></textarea>
+        </div>
+        <div class="modal-row">
+          <div class="input-group">
+            <label>PRIORITY</label>
+            <select id="task-priority" class="input">
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>DUE DATE</label>
+            <input type="date" id="task-due" class="input"/>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>STATUS</label>
+          <select id="task-status" class="input">
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" id="modal-save-btn" onclick="saveTask()">Save Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REALTIME TOAST -->
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
